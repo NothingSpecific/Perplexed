@@ -20,7 +20,7 @@ cxx_sources+=("${imgui_sources[@]}")
 
 # Debug builds will run with ASAN and UBSAN. This way we can address (almost) all sources of undefined behavior
 # We'll also use LSAN to detect memory leaks
-gcc_args_dbg=(-g -fsanitize=undefined -g -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=leak -fsanitize=address -fsanitize-address-use-after-scope -fstack-protector -fstack-protector-all -fstack-check)
+gcc_args_dbg=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=leak -fsanitize=address -fsanitize-address-use-after-scope -fstack-protector -fstack-protector-all -fstack-check)
 gxx_args_dbg=("${gcc_args_dbg[@]}")
 
 ld_args_dbg=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=leak -fsanitize=address -fsanitize-address-use-after-scope)
