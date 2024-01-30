@@ -14,7 +14,7 @@ LD=("g++")
 imgui_sources=(imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_tables.cpp imgui/imgui_widgets.cpp imgui/backends/imgui_impl_opengl3.cpp imgui/backends/imgui_impl_sdl2.cpp ImGuiFileDialog/ImGuiFileDialog.cpp ImGuiColorTextEdit/TextEditor.cpp)
 
 c_sources=()
-cxx_sources=(main.cpp gui.cpp)
+cxx_sources=(main.cpp gui.cpp file_open_dialog.cpp fonts/font.cpp keyboard.cpp)
 
 cxx_sources+=("${imgui_sources[@]}")
 
@@ -24,15 +24,20 @@ gcc_args_dbg=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cas
 gxx_args_dbg=("${gcc_args_dbg[@]}")
 
 ld_args_dbg=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=leak -fsanitize=address -fsanitize-address-use-after-scope)
+ld_args_ext_dbg=()
 
 # We'll use a separate build for TSAN, since TSAN and ASAN/LSAN are mutually exclusive
 gcc_args_dbg_thread=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=thread -fsanitize-address-use-after-scope -fstack-protector -fstack-protector-all -fstack-check)
 gxx_args_dbg_thread=("${gcc_args_dbg[@]}")
 
 ld_args_dbg_thread=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=thread -fsanitize-address-use-after-scope)
+ld_args_ext_dbg_thread=()
 
 gcc_args_release=(-fomit-frame-pointer -fexpensive-optimizations -flto -O3 -s -fstack-protector-explicit)
 gxx_args_release=("${gcc_args_release}")
+
+ld_args_ext_release=(-s)
+ld_args_ext_release=()
 
 gcc_search_directories=(/usr/local/include/GLFW/ /usr/local/include/SDL2/ ./ imgui/ imgui/backends/ ImGuiFileDialog/)
 gxx_search_directories=("${gcc_search_directories[@]}")
@@ -90,11 +95,13 @@ release)
 	gcc_args+=("${gcc_args_release[@]}")
 	gxx_args+=("${gxx_args_release[@]}")
 	ld_args+=("${ld_args_release[@]}")
+	ld_args_ext+=("${ld_args_ext_release[@]}")
 	;;
 debug)
 	gcc_args+=("${gcc_args_dbg[@]}")
 	gxx_args+=("${gcc_args_dbg[@]}")
 	ld_args+=("${ld_args_dbg[@]}")
+	ld_args_ext+=("${ld_args_ext_dbg[@]}")
 	;;
 tsan|debug_thread)
 	# Standardize build directory
@@ -103,6 +110,7 @@ tsan|debug_thread)
 	gcc_args+=("${gcc_args_dbg_thread[@]}")
 	gxx_args+=("${gcc_args_dbg_thread[@]}")
 	ld_args+=("${ld_args_dbg_thread[@]}")
+	ld_args_ext+=("${ld_args_ext_dbg_thread[@]}")
 	;;
 clean)
 	rm -rf build/
@@ -122,7 +130,7 @@ for d in "${gxx_search_directories[@]}"; do
 	gxx_args+=(-I"$d")
 done
 
-ld_args_ext+=(-s)
+ld_args_ext+=()
 for d in "${link_libs[@]}"; do
 	ld_args_ext+=("$d")
 done
