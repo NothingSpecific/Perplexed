@@ -36,6 +36,7 @@ ld_args_ext_dbg_thread=()
 gcc_args_release=(-fomit-frame-pointer -fexpensive-optimizations -flto -O3 -s -fstack-protector-explicit)
 gxx_args_release=("${gcc_args_release}")
 
+ld_args_release=(-fomit-frame-pointer -fexpensive-optimizations -flto -O3 -s -fstack-protector-explicit)
 ld_args_ext_release=(-s)
 
 gcc_search_directories=(/usr/local/include/GLFW/ /usr/local/include/SDL2/ ./ imgui/ imgui/backends/ ImGuiFileDialog/)
