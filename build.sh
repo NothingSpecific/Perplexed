@@ -29,7 +29,7 @@ ld_args_dbg=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast
 gcc_args_dbg_thread=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=thread -fsanitize-address-use-after-scope -fstack-protector -fstack-protector-all -fstack-check)
 gxx_args_dbg_thread=("${gcc_args_dbg[@]}")
 
-ld_args_dbg_thread=(-fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=thread -fsanitize-address-use-after-scope)
+ld_args_dbg_thread=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=thread -fsanitize-address-use-after-scope)
 
 gcc_args_release=(-fomit-frame-pointer -fexpensive-optimizations -flto -O3 -s -fstack-protector-explicit)
 gxx_args_release=("${gcc_args_release}")
