@@ -307,7 +307,7 @@ namespace Perplexed{
 		
 				ImGui::Text("%6d/%-6d %6d lines  | %s | %s | %s | %s", cpos.mLine + 1, cpos.mColumn + 1, editor.GetTotalLines(),
 					editor.IsOverwrite() ? "Ovr" : "Ins",
-					editor.CanUndo() ? "*" : " ",
+					!editor.IsSaved() ? "*" : " ",
 					editor.GetLanguageDefinition().mName.c_str(), file);
 		
 				editor.Render("TextEditor");
@@ -349,6 +349,7 @@ namespace Perplexed{
 			{
 				std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
 				editor.SetText(str);
+				editor.MarkSaved();
 			}
 		}
 		void force_save(){
@@ -356,7 +357,7 @@ namespace Perplexed{
 			if(t.good()){
 				t << editor.GetText();
 				t.close();
-				//open(file);
+				editor.MarkSaved();
 			}
 		}
 		void save(){
