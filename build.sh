@@ -14,16 +14,16 @@ LD=("g++")
 imgui_sources=(imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_tables.cpp imgui/imgui_widgets.cpp imgui/backends/imgui_impl_opengl3.cpp imgui/backends/imgui_impl_sdl2.cpp ImGuiFileDialog/ImGuiFileDialog.cpp ImGuiColorTextEdit/TextEditor.cpp)
 
 c_sources=()
-cxx_sources=(main.cpp)
+cxx_sources=(main.cpp gui.cpp)
 
 cxx_sources+=("${imgui_sources[@]}")
 
 # Debug builds will run with ASAN and UBSAN. This way we can address (almost) all sources of undefined behavior
 # We'll also use LSAN to detect memory leaks
-gcc_args_dbg=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=leak -fsanitize=address -fsanitize-address-use-after-scope -fstack-protector -fstack-protector-all -fstack-check)
+gcc_args_dbg=(-g -fsanitize=undefined -g -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=leak -fsanitize=address -fsanitize-address-use-after-scope -fstack-protector -fstack-protector-all -fstack-check)
 gxx_args_dbg=("${gcc_args_dbg[@]}")
 
-ld_args_dbg=(-fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=leak -fsanitize=address -fsanitize-address-use-after-scope)
+ld_args_dbg=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=leak -fsanitize=address -fsanitize-address-use-after-scope)
 
 # We'll use a separate build for TSAN, since TSAN and ASAN/LSAN are mutually exclusive
 gcc_args_dbg_thread=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=thread -fsanitize-address-use-after-scope -fstack-protector -fstack-protector-all -fstack-check)
@@ -97,6 +97,9 @@ debug)
 	ld_args+=("${ld_args_dbg[@]}")
 	;;
 tsan|debug_thread)
+	# Standardize build directory
+	build=tsan
+	
 	gcc_args+=("${gcc_args_dbg_thread[@]}")
 	gxx_args+=("${gcc_args_dbg_thread[@]}")
 	ld_args+=("${ld_args_dbg_thread[@]}")
@@ -137,11 +140,13 @@ for f in "${c_sources[@]}"; do
 		fi
 		ix="$((ix+2))"
 	done
-	ext=".${ext##*.}"
+	ext=".${f##*.}"
 	basename="$(basename "$f" "$ext")"
 	dirname="$(dirname "$f")"
 	obj_files+=(build/obj/"$build"/"$basename".o)
+
 	cmd=("${CC[@]}" "${gcc_args[@]}" -I"$dirname" "${pfa[@]}" -c "$f" -o build/obj/"$build"/"$basename".o)
+
 	echo "${cmd[@]}"
 	"${cmd[@]}"
 done
@@ -156,11 +161,13 @@ for f in "${cxx_sources[@]}"; do
 		fi
 		ix="$((ix+2))"
 	done
-	ext=".${ext##*.}"
+	ext=".${f##*.}"
 	basename="$(basename "$f" "$ext")"
 	dirname="$(dirname "$f")"
 	obj_files+=(build/obj/"$build"/"$basename".o)
+
 	cmd=("${CXX[@]}" "${gcc_args[@]}" -I"$dirname" "${pfa[@]}" -c "$f" -o build/obj/"$build"/"$basename".o)
+
 	echo "${cmd[@]}"
 	"${cmd[@]}"
 done
@@ -168,4 +175,3 @@ done
 cmd=("${LD[@]}" -o bin/"$build"/"$out_bin" "${ld_args[@]}" "${obj_files[@]}" "${ld_args_ext[@]}")
 echo "${cmd[@]}"
 "${cmd[@]}"
-
