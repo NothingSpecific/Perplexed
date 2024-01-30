@@ -117,6 +117,15 @@ clean)
 	rm -rf bin/
 	exit
 	;;
+install)
+	if [[ "$UID" != 0 ]]; then
+		echo "action 'install' must be run as root..." >&2
+		exit
+	fi
+	cat bin/release/Perplexed > /usr/local/bin/perplexed
+	chmod u+rx,g+rx,o+rx /usr/local/bin/perplexed
+	exit
+	;;
 *)
 	echo "Invalid build: '$build'" >&2
 	exit 1
