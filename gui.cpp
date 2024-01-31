@@ -39,6 +39,7 @@ namespace Perplexed{
 
 		TextEditor editor;
 		bool file_open_dialog = false;
+		bool find_dialog = false;
 
 		int run(){
 			// Setup SDL
@@ -159,7 +160,7 @@ namespace Perplexed{
 				" )"
 				};
 		
-			for (int i = 0; i < sizeof(ppnames) / sizeof(ppnames[0]); ++i)
+			for (unsigned long i = 0; i < sizeof(ppnames) / sizeof(ppnames[0]); ++i)
 			{
 				TextEditor::Identifier id;
 				id.mDeclaration = ppvalues[i];
@@ -179,7 +180,7 @@ namespace Perplexed{
 				"ID3D11Device", "ID3D11DeviceContext", "ID3D11Buffer", "ID3D11Buffer", "ID3D10Blob", "ID3D11VertexShader", "ID3D11InputLayout", "ID3D11Buffer",
 				"ID3D10Blob", "ID3D11PixelShader", "ID3D11SamplerState", "ID3D11ShaderResourceView", "ID3D11RasterizerState", "ID3D11BlendState", "ID3D11DepthStencilState",
 				"IDXGISwapChain", "ID3D11RenderTargetView", "ID3D11Texture2D", "class TextEditor" };
-			for (int i = 0; i < sizeof(identifiers) / sizeof(identifiers[0]); ++i)
+			for (unsigned long i = 0; i < sizeof(identifiers) / sizeof(identifiers[0]); ++i)
 			{
 				TextEditor::Identifier id;
 				id.mDeclaration = std::string(idecls[i]);
@@ -270,7 +271,7 @@ namespace Perplexed{
 		
 						if (ImGui::MenuItem("Undo", "Ctrl-Z", nullptr, !ro && editor.CanUndo()))
 							editor.Undo();
-						if (ImGui::MenuItem("Redo", "Ctrl-Y", nullptr, !ro && editor.CanRedo()))
+						if (ImGui::MenuItem("Redo", "Ctrl-Y | Ctrl-Shift-Z", nullptr, !ro && editor.CanRedo()))
 							editor.Redo();
 		
 						ImGui::Separator();
@@ -370,6 +371,9 @@ namespace Perplexed{
 		}
 		void open(){
 			file_open_dialog = true;
+		}
+		void find(){
+			find_dialog = true;
 		}
 	}
 }

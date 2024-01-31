@@ -18,6 +18,7 @@ namespace Perplexed{
 		void open();
 		void save();
 		void close();
+		void find();
 	}
 }
 
