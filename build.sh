@@ -84,7 +84,7 @@ for arg in "$@"; do
 	esac
 done
 if [[ "$build" == "" ]]; then
-	build=release
+	build=all
 fi
 if [[ "$build" == "all" ]]; then
 	build=release
