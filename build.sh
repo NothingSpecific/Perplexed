@@ -39,10 +39,10 @@ gxx_args_release=("${gcc_args_release}")
 ld_args_release=(-fomit-frame-pointer -fexpensive-optimizations -flto -O3 -s -fstack-protector-explicit)
 ld_args_ext_release=(-s)
 
-gcc_search_directories=(/usr/local/include/GLFW/ /usr/local/include/SDL2/ ./ imgui/ imgui/backends/ ImGuiFileDialog/)
+gcc_search_directories=( glfw/include/GLFW/ SDL/include ./ imgui/ imgui/backends/ ImGuiFileDialog/)
 gxx_search_directories=("${gcc_search_directories[@]}")
 
-link_libs=(/usr/local/lib/libSDL2.a /usr/local/lib/libSDL2.so /usr/local/lib/libSDL2_test.a /usr/local/lib/libSDL2main.a /usr/local/lib/libglfw3.a)
+link_libs=(SDL/build/.libs/libSDL2.a SDL/build/.libs/libSDL2.so SDL/build/.libs/libSDL2_test.a SDL/build/.libs/libSDL2main.a glfw/build/src/libglfw3.a)
 
 # -Werror is usually a good idea, since compiler warnings usually have a purpose
 # We won't assume we're smarter than the compiler by ignoring warnings
@@ -65,7 +65,7 @@ file_args+=("ImGuiColorTextEdit/TextEditor.cpp" -Wno-unused-variable) # This isn
 file_args+=("ImGuiColorTextEdit/TextEditor.cpp" -Wno-reorder) # Ignoring this can result in operations on uninitialized variables. Any standards-compliant C99 compiler initializes to 0 anyway, but it's still not a good idea
 file_args+=("ImGuiColorTextEdit/TextEditor.cpp" -Wno-sequence-point) # This warns of possible undefined behavior in side-effects. It should probably be addressed
 
-ld_args=(-pthread -L/usr/local/lib -pthread -flto)
+ld_args=(-pthread -pthread -flto)
 ld_args_ext=(-ldl -lGL)
 
 build=""
@@ -85,6 +85,18 @@ for arg in "$@"; do
 done
 if [[ "$build" == "" ]]; then
 	build=release
+fi
+if [[ "$build" == "all" ]]; then
+	build=release
+
+	# Build dependencies	
+	echo "Building GLFW..."
+	bash build_glfw.sh
+	echo "Done."
+
+	echo "Building SDL..."
+	bash build_sdl.sh
+	echo "Done."
 fi
 
 mkdir -p build/obj/"$build"

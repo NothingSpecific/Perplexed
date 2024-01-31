@@ -7,3 +7,9 @@
 [submodule "ImGuiColorTextEdit"]
 	path = ImGuiColorTextEdit
 	url = https://github.com/NothingSpecific/ImGuiColorTextEdit.git
+[submodule "glfw"]
+	path = glfw
+	url = https://github.com/glfw/glfw
+[submodule "SDL"]
+	path = SDL
+	url = https://github.com/libsdl-org/SDL

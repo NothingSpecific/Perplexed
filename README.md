@@ -6,15 +6,10 @@ Perplexed currently supports basic text editing functionality. Eventually it's p
 
 To build:
 
-1. Install GLFW into `/usr/local/include/GLFW`
-2. Install SDL2 into `/usr/local/include/SDL2`
+- Glone this repository and all submodules with `git clone --recursive https://github.com/NothingSpecific/Perplexed.git`
+- Build with `make`
+	- This will also build SDL2 and GLFW
 
-Once your system has GLFW and SDL2 installed, you should have the necessary dependencies. From here, you can build with
-
-`make`
-
-and install with
-
-`sudo make install`
+- Install to your local system with `sudo make install`
 
 Perplexed will then be installed as `/usr/local/bin/perplexed` where you can run it as the shell command `perplexed`.

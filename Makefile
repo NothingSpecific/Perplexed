@@ -1,5 +1,5 @@
-build:
-	./build.sh
+all:
+	./build.sh --build=all
 release:
 	./build.sh --build=release
 install:
