@@ -6,7 +6,7 @@ Perplexed currently supports basic text editing functionality. Eventually it's p
 
 To build:
 
-- Glone this repository and all submodules with `git clone --recursive https://github.com/NothingSpecific/Perplexed.git`
+- Clone this repository and all submodules with `git clone --recursive https://github.com/NothingSpecific/Perplexed.git`
 - `cd Perplexed`
 - Build with `make`
 	- This will also build SDL2 and GLFW
