@@ -3,6 +3,11 @@
 #include "definitions.h"
 #include "gui.h"
 #include "imgui.h"
+
+// Adding these `#include`s here for easier staging of upstream merges
+#include "icon_fonts/IconsForkAwesome.h"
+#include "icon_fonts/IconsMaterialDesign.h"
+
 #include "ImGuiFileDialog/ImGuiFileDialog.h"
 
 namespace Perplexed{
