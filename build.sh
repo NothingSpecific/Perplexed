@@ -23,8 +23,14 @@ cxx_sources+=("${imgui_sources[@]}")
 gcc_args_dbg=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=leak -fsanitize=address -fsanitize-address-use-after-scope -fstack-protector -fstack-protector-all -fstack-check)
 gxx_args_dbg=("${gcc_args_dbg[@]}")
 
+gcc_args_vg=(-g)
+gxx_args_vg=("${gcc_args_vg[@]}")
+
 ld_args_dbg=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=leak -fsanitize=address -fsanitize-address-use-after-scope)
 ld_args_ext_dbg=()
+
+ld_args_vg=(-g)
+ld_args_ext_vg=()
 
 # We'll use a separate build for TSAN, since TSAN and ASAN/LSAN are mutually exclusive
 gcc_args_dbg_thread=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=thread -fsanitize-address-use-after-scope -fstack-protector -fstack-protector-all -fstack-check)
@@ -115,6 +121,12 @@ debug)
 	gxx_args+=("${gcc_args_dbg[@]}")
 	ld_args+=("${ld_args_dbg[@]}")
 	ld_args_ext+=("${ld_args_ext_dbg[@]}")
+	;;
+valgrind)
+	gcc_args+=("${gcc_args_vg[@]}")
+	gxx_args+=("${gcc_args_vg[@]}")
+	ld_args+=("${ld_args_vg[@]}")
+	ld_args_ext+=("${ld_args_ext_vg[@]}")
 	;;
 tsan|debug_thread)
 	# Standardize build directory

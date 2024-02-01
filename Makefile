@@ -8,5 +8,7 @@ debug:
 	./build.sh --build=debug
 tsan:
 	./build.sh --build=tsan
+valgrind:
+	./build.sh --build=valgrind
 clean:
 	./build.sh --build=clean
