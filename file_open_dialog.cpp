@@ -23,7 +23,7 @@ namespace Perplexed{
 			config.flags =	ImGuiFileDialogFlags_DisableCreateDirectoryButton |
 					ImGuiFileDialogFlags_DontShowHiddenFiles;
 
-			dialog->OpenDialog(name(), "Open File", ".*", config);
+			dialog->OpenDialog(name(), "Open File", "((.*))", config);
 
 			dialog->SetFileStyle(IGFD_FileStyleByFullName, ".", ImVec4(0.3f, 0.3f, 0.3f, 1), ICON_FK_CIRCLE);
 			dialog->SetFileStyle(IGFD_FileStyleByFullName, "..", ImVec4(0.8f, 0.8f, 0.8f, 1), ICON_FK_LEVEL_UP);
