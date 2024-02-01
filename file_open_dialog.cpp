@@ -1,42 +1,66 @@
 #include "file_open_dialog.h"
 
+#include "definitions.h"
 #include "gui.h"
+#include "imgui.h"
 #include "ImGuiFileDialog/ImGuiFileDialog.h"
 
 namespace Perplexed{
 	namespace GUI{
-		ImGuiFileDialog dialog;
-		
-		bool show_file_open_dialog(){
-			ImGui::PushFont(font::icon_font_karla_regular_forkawesome);
+		file_open_dialog::~file_open_dialog(){
+			if(dialog != nullptr){
+				delete dialog;
+				dialog = nullptr;
+			}
+		}
+		bool file_open_dialog::setup(){
+			if(is_setup) return true;
+			
+			dialog = new ImGuiFileDialog();
 
 			IGFD::FileDialogConfig config;
-
-			ImVec2 max_size = ImVec2( // Half the display area
-					(io->DisplaySize.x - (style->FramePadding.x * 2.0f) - (style->FrameBorderSize * 2.0f)),
-					(io->DisplaySize.y - (style->FramePadding.y * 2.0f) - (style->FrameBorderSize * 2.0f))
-				);
-			ImVec2 min_size = max_size / 2.0f;
 
 			config.flags =	ImGuiFileDialogFlags_DisableCreateDirectoryButton |
 					ImGuiFileDialogFlags_DontShowHiddenFiles;
 
-			dialog.OpenDialog("OpenFileDialog", "Open File", ".*", config);
+			dialog->OpenDialog(name(), "Open File", ".*", config);
 
-			ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByFullName, ".", ImVec4(0.3f, 0.3f, 0.3f, 1), ICON_FK_CIRCLE);
-			ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByFullName, "..", ImVec4(0.8f, 0.8f, 0.8f, 1), ICON_FK_LEVEL_UP);
-
-			if (dialog.Display("OpenFileDialog", ImGuiWindowFlags_NoCollapse, min_size, max_size)){
-				if (dialog.IsOk()){
-					open(dialog.GetFilePathName());
+			dialog->SetFileStyle(IGFD_FileStyleByFullName, ".", ImVec4(0.3f, 0.3f, 0.3f, 1), ICON_FK_CIRCLE);
+			dialog->SetFileStyle(IGFD_FileStyleByFullName, "..", ImVec4(0.8f, 0.8f, 0.8f, 1), ICON_FK_LEVEL_UP);
+			
+			is_setup = true;
+			return true;
+		}
+		bool file_open_dialog::render(){
+			ImVec2 max_size = ImVec2(
+					(io->DisplaySize.x - (style->FramePadding.x * 2.0f) - (style->FrameBorderSize * 2.0f)),
+					(io->DisplaySize.y - (style->FramePadding.y * 2.0f) - (style->FrameBorderSize * 2.0f))
+				);
+			ImVec2 min_size = max_size / 2.0f;
+			
+			if (dialog->Display("OpenFileDialog", ImGuiWindowFlags_NoCollapse, min_size, max_size)){
+				if (dialog->IsOk()){
+					Perplexed::GUI::open(dialog->GetFilePathName().c_str());
 				}
-	                        dialog.Close();
-				ImGui::PopFont();
+	                        close();
 	                        return false;
                         }
-
-			ImGui::PopFont();
                         return true;
+		}
+		bool file_open_dialog::open(){
+			return setup();
+		}
+		bool file_open_dialog::close(){
+			if(is_setup){
+				dialog->Close();
+				delete dialog;
+				dialog = nullptr;
+				is_setup = false;
+			}
+			return true;
+		}
+		const char *file_open_dialog::name(){
+			return "OpenFileDialog";
 		}
 	}
 }

@@ -14,11 +14,12 @@ namespace Perplexed{
 //		extern std::string file;
 		
 		int run();
-		void open(std::string file);
+		void open(const char *file);
 		void open();
 		void save();
 		void close();
 		void find();
+		void quit();
 	}
 }
 

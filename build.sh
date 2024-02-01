@@ -14,7 +14,7 @@ LD=("g++")
 imgui_sources=(imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_tables.cpp imgui/imgui_widgets.cpp imgui/backends/imgui_impl_opengl3.cpp imgui/backends/imgui_impl_sdl2.cpp ImGuiFileDialog/ImGuiFileDialog.cpp ImGuiColorTextEdit/TextEditor.cpp)
 
 c_sources=()
-cxx_sources=(main.cpp gui.cpp file_open_dialog.cpp fonts/font.cpp keyboard.cpp)
+cxx_sources=(main.cpp gui.cpp file_open_dialog.cpp fonts/font.cpp keyboard.cpp window.cpp main_window.cpp editor_window.cpp filesystem.cpp)
 
 cxx_sources+=("${imgui_sources[@]}")
 
@@ -196,7 +196,7 @@ for f in "${cxx_sources[@]}"; do
 	dirname="$(dirname "$f")"
 	obj_files+=(build/obj/"$build"/"$basename".o)
 
-	cmd=("${CXX[@]}" "${gcc_args[@]}" -I"$dirname" "${pfa[@]}" -c "$f" -o build/obj/"$build"/"$basename".o)
+	cmd=("${CXX[@]}" "${gxx_args[@]}" -I"$dirname" "${pfa[@]}" -c "$f" -o build/obj/"$build"/"$basename".o)
 
 	echo "${cmd[@]}"
 	"${cmd[@]}"
