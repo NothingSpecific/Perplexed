@@ -30,7 +30,7 @@ namespace Perplexed{
 			TextEditor *editor;
 			
 			editor_window(main_window *parent);
-			~editor_window();
+			virtual ~editor_window();
 			virtual bool setup();
 			virtual bool render();
 			
