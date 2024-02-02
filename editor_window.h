@@ -28,6 +28,7 @@ namespace Perplexed{
 			
 		public:
 			TextEditor *editor;
+			TextEditor::LanguageDefinition *lang = nullptr;
 			
 			editor_window(main_window *parent);
 			virtual ~editor_window();

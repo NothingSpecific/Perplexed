@@ -158,7 +158,11 @@ namespace Perplexed{
 		
 		void main_window::open(const char *file){
 			if(!is_open(file)){
+				if(editors.empty() && editor != nullptr){
+					delete editor;
+				}
 				editor = new editor_window(this);
+				editor->setup();
 				editor->open(file);
 				editors.push_back(editor);
 			} else

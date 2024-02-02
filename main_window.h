@@ -19,7 +19,7 @@ namespace Perplexed{
 			bool show_file_dialog = false;
 			bool find_dialog = false;
 			
-			editor_window *editor;
+			editor_window *editor = nullptr;
 			std::vector<editor_window*> editors;
 			
 			file_open_dialog file_dialog;
