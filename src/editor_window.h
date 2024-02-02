@@ -24,7 +24,8 @@ namespace Perplexed{
 			char *window_name = nullptr;
 			ImGuiWindowFlags flags = ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoTitleBar |
 							ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-							ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus;
+							ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus |
+							ImGuiWindowFlags_NoSavedSettings;
 			
 		public:
 			TextEditor *editor;

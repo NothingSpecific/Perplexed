@@ -27,7 +27,8 @@ namespace Perplexed{
 			ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus |
 							ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
 							ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoTitleBar |
-							ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+							ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoScrollWithMouse |
+							ImGuiWindowFlags_NoSavedSettings;
 			
 		public:
 			main_window();
