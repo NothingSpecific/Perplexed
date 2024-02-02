@@ -39,8 +39,12 @@ namespace Perplexed{
 		
 		main_window *mw;
 		bool done;
-
+		
 		int run(){
+			return run(nullptr);
+		}
+
+		int run(std::vector<const char*> *files){
 			done = false;
 			// Setup SDL
 			if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
@@ -140,6 +144,11 @@ namespace Perplexed{
 			Perplexed::GUI::style = &style;
 			
 			mw = new main_window();
+			
+			if(files != nullptr)
+				for(const char *file : *files)
+					mw->open(file);
+			
 			mw->setup();
 
 			// Main loop
@@ -214,6 +223,9 @@ namespace Perplexed{
 		}
 		void save(){
 			mw->save();
+		}
+		void save_as(){
+			mw->save_as();
 		}
 		void close(){
 			mw->close();

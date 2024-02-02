@@ -3,7 +3,9 @@
 
 #include "imgui.h"
 #include "fonts/font.h"
+
 #include <string>
+#include <vector>
 
 namespace Perplexed{
 	namespace GUI{
@@ -14,9 +16,11 @@ namespace Perplexed{
 //		extern std::string file;
 		
 		int run();
+		int run(std::vector<const char*> *files);
 		void open(const char *file);
 		void open();
 		void save();
+		void save_as();
 		void close();
 		void find();
 		void quit();

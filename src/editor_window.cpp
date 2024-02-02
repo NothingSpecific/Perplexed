@@ -22,6 +22,8 @@
 #include "fonts/font_intern.h" // For loading fonts
 #include "filesystem.h"
 
+#include <filesystem>
+
 namespace Perplexed{
 	namespace GUI{
 		editor_window::editor_window(main_window *parent){
@@ -123,7 +125,24 @@ namespace Perplexed{
 			return file;
 		}
 		
-		void editor_window::open(const char *file){
+		bool editor_window::open(const char *file){
+			set_file(file);
+			
+			if(std::filesystem::is_directory(file)){
+				return false;
+			}
+			
+			std::ifstream t(file);
+			if (t.good())
+			{
+				std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+				editor->SetText(str);
+				editor->MarkSaved();
+				return true;
+			}
+			return false;
+		}
+		void editor_window::set_file(const char *file){
 			free((void*) this->file);
 			free((void*) this->file_basename);
 			
@@ -136,26 +155,20 @@ namespace Perplexed{
 			strcpy(window_name, "editor_window [");
 			window_name = strcat(window_name, this->file);
 			window_name = strcat(window_name, "]");
-			
-			std::ifstream t(file);
-			if (t.good())
-			{
-				std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
-				editor->SetText(str);
-				editor->MarkSaved();
-			}
 		}
-		void editor_window::force_save(){
+		bool editor_window::force_save(){
 			std::ofstream t(file);
 			if(t.good()){
 				t << editor->GetText();
 				t.close();
 				editor->MarkSaved();
+				return true;
 			}
+			return false;
 		}
-		void editor_window::save(){
-			if(editor->IsReadOnly()) return;
-			force_save();
+		bool editor_window::save(){
+			if(editor->IsReadOnly()) return false;
+			return force_save();
 		}
 		void editor_window::close(){
 			free((void*) file);

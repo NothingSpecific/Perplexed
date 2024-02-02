@@ -14,7 +14,7 @@ LD=("g++")
 imgui_sources=(imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_tables.cpp imgui/imgui_widgets.cpp imgui/backends/imgui_impl_opengl3.cpp imgui/backends/imgui_impl_sdl2.cpp ImGuiFileDialog/ImGuiFileDialog.cpp ImGuiColorTextEdit/TextEditor.cpp)
 
 c_sources=()
-cxx_sources=(src/main.cpp src/gui.cpp src/file_open_dialog.cpp fonts/font.cpp src/keyboard.cpp src/window.cpp src/main_window.cpp src/editor_window.cpp src/filesystem.cpp)
+cxx_sources=(src/main.cpp src/gui.cpp src/file_open_dialog.cpp src/file_save_dialog.cpp fonts/font.cpp src/keyboard.cpp src/window.cpp src/main_window.cpp src/editor_window.cpp src/filesystem.cpp)
 
 cxx_sources+=("${imgui_sources[@]}")
 
@@ -74,6 +74,7 @@ file_args=()
 # Their CMakeLists.txt suppresses these warnings, so we'll do the same
 file_args+=("ImGuiFileDialog/ImGuiFileDialog.cpp" -Wno-unknown-pragmas)
 file_args+=("src/file_open_dialog.cpp" -Wno-unknown-pragmas) # `file_open_dialog.cpp` includes `ImGuiFileDialog.h`, so we need to suppress errors here too
+file_args+=("src/file_save_dialog.cpp" -Wno-unknown-pragmas)
 
 # ImGuiColorTextEdit/TextEditor.cpp throws plenty of errors when compiled with with -Wall
 # Suppress them so we can focus on what we have control over: our own code

@@ -3,6 +3,7 @@
 
 #include "window.h"
 #include "file_open_dialog.h"
+#include "file_save_dialog.h"
 
 namespace Perplexed{
 	namespace GUI{
@@ -16,13 +17,17 @@ namespace Perplexed{
 	namespace GUI{
 		class main_window : window{
 		private:
-			bool show_file_dialog = false;
-			bool find_dialog = false;
+			bool show_open_dialog = false;
+			bool show_save_dialog = false;
+			bool show_find_dialog = false;
 			
 			editor_window *editor = nullptr;
+			editor_window *save_file = nullptr; // For keeping track of which editor was active when the save dialog was opened
+			
 			std::vector<editor_window*> editors;
 			
-			file_open_dialog file_dialog;
+			file_open_dialog open_dialog;
+			file_save_dialog save_dialog;
 			
 			ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus |
 							ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
@@ -42,9 +47,10 @@ namespace Perplexed{
 			virtual bool render_tab_bar(); // A tab bar to list our open files
 			
 			virtual void open();
-			virtual void open(const char *file);
-			virtual void force_save();
+			virtual bool open(const char *file);
+			virtual bool force_save();
 			virtual void save();
+			virtual void save_as();
 			virtual void close();
 			virtual void find();
 			virtual const char *name();

@@ -36,13 +36,16 @@ namespace Perplexed{
 			virtual bool setup();
 			virtual bool render();
 			
-			virtual void open(const char *file);
-			virtual void force_save();
-			virtual void save();
+			virtual bool open(const char *file);
+			virtual bool force_save();
+			virtual bool save();
 			virtual void close();
 			virtual const char *name();
 			virtual const char *filename();
 			virtual const char *basename();
+			
+			// Set the file without modifying the editor
+			virtual void set_file(const char *file);
 		};
 	}
 }

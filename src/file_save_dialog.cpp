@@ -1,7 +1,8 @@
-#include "file_open_dialog.h"
+#include "file_save_dialog.h"
 
 #include "definitions.h"
 #include "gui.h"
+#include "editor_window.h"
 #include "imgui.h"
 
 // Adding these `#include`s here for easier staging of upstream merges
@@ -10,15 +11,17 @@
 
 #include "ImGuiFileDialog/ImGuiFileDialog.h"
 
+#include <stdexcept>
+
 namespace Perplexed{
 	namespace GUI{
-		file_open_dialog::~file_open_dialog(){
+		file_save_dialog::~file_save_dialog(){
 			if(dialog != nullptr){
 				delete dialog;
 				dialog = nullptr;
 			}
 		}
-		bool file_open_dialog::setup(){
+		bool file_save_dialog::setup(){
 			if(is_setup) return true;
 			
 			dialog = new ImGuiFileDialog();
@@ -26,7 +29,8 @@ namespace Perplexed{
 			IGFD::FileDialogConfig config;
 
 			config.flags =	ImGuiFileDialogFlags_DisableCreateDirectoryButton |
-					ImGuiFileDialogFlags_DontShowHiddenFiles;
+					ImGuiFileDialogFlags_DontShowHiddenFiles |
+					ImGuiFileDialogFlags_ConfirmOverwrite;
 
 			dialog->OpenDialog(name(), name(), "((.*))", config);
 
@@ -36,7 +40,11 @@ namespace Perplexed{
 			is_setup = true;
 			return true;
 		}
-		bool file_open_dialog::render(){
+		bool file_save_dialog::render(){
+			throw std::runtime_error("`render()` invalid for Perplexed::GUI::file_save_dialog");
+			return false;
+		}
+		bool file_save_dialog::render(editor_window *save_file){
 			ImVec2 max_size = ImVec2(
 					(io->DisplaySize.x - (style->FramePadding.x * 2.0f) - (style->FrameBorderSize * 2.0f)),
 					(io->DisplaySize.y - (style->FramePadding.y * 2.0f) - (style->FrameBorderSize * 2.0f))
@@ -45,17 +53,18 @@ namespace Perplexed{
 			
 			if (dialog->Display(name(), ImGuiWindowFlags_NoCollapse, min_size, max_size)){
 				if (dialog->IsOk()){
-					Perplexed::GUI::open(dialog->GetFilePathName().c_str());
+					save_file->set_file(dialog->GetFilePathName().c_str());
+					save_file->save();
 				}
 	                        close();
 	                        return false;
                         }
                         return true;
 		}
-		bool file_open_dialog::open(){
+		bool file_save_dialog::open(){
 			return setup();
 		}
-		bool file_open_dialog::close(){
+		bool file_save_dialog::close(){
 			if(is_setup){
 				dialog->Close();
 				delete dialog;
@@ -64,8 +73,8 @@ namespace Perplexed{
 			}
 			return true;
 		}
-		const char *file_open_dialog::name(){
-			return "Open File";
+		const char *file_save_dialog::name(){
+			return "Save As";
 		}
 	}
 }

@@ -20,21 +20,22 @@
 #include <iostream>
 
 #include "gui.h"
-#include "file_open_dialog.h"
 #include "keyboard.h"
 
 #include "fonts/font_intern.h" // For loading fonts
 
 namespace Perplexed{
 	namespace GUI{
-		main_window::main_window(){
-			editor = new editor_window(this);
-		}
+		main_window::main_window(){}
 		main_window::~main_window(){
 			for(editor_window *e : editors)
 				delete e;
 		}
 		bool main_window::setup(){
+			if(editor != nullptr)
+				return true;
+			
+			editor = new editor_window(this);
 			return editor->setup();
 		}
 		bool main_window::render(){
@@ -65,9 +66,13 @@ namespace Perplexed{
 			const ImVec2 display_origin(frame_width, frame_height);
 			const ImVec2 display_internal_size(io->DisplaySize.x - frame_width, io->DisplaySize.y - frame_height);
 			
-			if(show_file_dialog){
-				file_dialog.open();
-				show_file_dialog = file_dialog.render();
+			if(show_open_dialog){
+				open_dialog.open();
+				show_open_dialog = open_dialog.render();
+			}
+			if(show_save_dialog){
+				save_dialog.open();
+				show_save_dialog = save_dialog.render(save_file);
 			}
 			ImGui::PopFont();
 			
@@ -100,6 +105,10 @@ namespace Perplexed{
 					if (ImGui::MenuItem("Save", "Ctrl-S"))
 					{
 						save();
+					}
+					if (ImGui::MenuItem("Save As", "Ctrl-Shift-S"))
+					{
+						save_as();
 					}
 					if (ImGui::MenuItem("Open", "Ctrl-O"))
 					{
@@ -156,34 +165,50 @@ namespace Perplexed{
 			return false;
 		}
 		
-		void main_window::open(const char *file){
+		bool main_window::open(const char *file){
 			if(!is_open(file)){
-				if(editors.empty() && editor != nullptr){
-					delete editor;
+				editor_window *e = new editor_window(this);
+				if(e->open(file)){
+					if(editors.empty() && editor != nullptr)
+						delete editor;
+					e->setup();
+					editors.push_back(e);
+					editor = e;
+					return true;
+				} else{
+					delete e;
+					return false;
 				}
-				editor = new editor_window(this);
-				editor->setup();
-				editor->open(file);
-				editors.push_back(editor);
+				
 			} else
 				for(editor_window *e : editors)
-					if(!strcmp(e->filename(), file))
+					if(!strcmp(e->filename(), file)){
 						editor = e;
+						return true;
+					}
+			return false;
 		}
-		void main_window::force_save(){
-			editor->force_save();
+		bool main_window::force_save(){
+			return editor->force_save();
 		}
 		void main_window::save(){
-			editor->save();
+			if(editor->filename() == nullptr){
+				save_as();
+			} else
+				editor->save();
+		}
+		void main_window::save_as(){
+			show_save_dialog = true;
+			save_file = editor;
 		}
 		void main_window::close(){
 			editor->close();
 		}
 		void main_window::open(){
-			show_file_dialog = true;
+			show_open_dialog = true;
 		}
 		void main_window::find(){
-			find_dialog = true;
+			show_find_dialog = true;
 		}
 		const char *main_window::name(){
 			return "Perplexed IDE";

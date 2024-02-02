@@ -19,12 +19,17 @@ namespace Perplexed{
 				bool alt = input[SDL_SCANCODE_LALT] || input[SDL_SCANCODE_RALT];
 				
 				if(ctrl){
-					if(!shift)
+					if(!shift){
 						if(!alt){
 							if(input[SDL_SCANCODE_O]) open();
 							else if(input[SDL_SCANCODE_S]) save();
 							else if(input[SDL_SCANCODE_F]) find();
 						}
+					} else{
+						if(!alt){
+							if(input[SDL_SCANCODE_S]) save_as();
+						}
+					}
 				}
 			}
 		}
