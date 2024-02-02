@@ -75,6 +75,8 @@ file_args+=("ImGuiColorTextEdit/TextEditor.cpp" -Wno-sequence-point) # This warn
 ld_args=(-pthread -pthread -flto)
 ld_args_ext=(-ldl -lGL)
 
+owd="$PWD"
+
 build=""
 for arg in "$@"; do
 	case "$arg" in
@@ -105,30 +107,39 @@ if [[ "$build" == "all" ]]; then
 	bash build_sdl.sh
 	echo "Done."
 fi
+depbuild=false
+
+case "$build" in
+reldeps|dbgdeps|tsandeps|vgdeps)
+	depbuild=true
+	cp -r ~/git/ImGuiFileDialog/* ImGuiFileDialog/
+	cp -r ~/git/ImGuiColorTextEdit/* ImGuiColorTextEdit/
+	;;
+esac
 
 mkdir -p build/obj/"$build"
 mkdir -p bin/"$build"
 
 case "$build" in
-release)
+release|reldeps)
 	gcc_args+=("${gcc_args_release[@]}")
 	gxx_args+=("${gxx_args_release[@]}")
 	ld_args+=("${ld_args_release[@]}")
 	ld_args_ext+=("${ld_args_ext_release[@]}")
 	;;
-debug)
+debug|dbgdeps)
 	gcc_args+=("${gcc_args_dbg[@]}")
 	gxx_args+=("${gcc_args_dbg[@]}")
 	ld_args+=("${ld_args_dbg[@]}")
 	ld_args_ext+=("${ld_args_ext_dbg[@]}")
 	;;
-valgrind)
+valgrind|vgdeps)
 	gcc_args+=("${gcc_args_vg[@]}")
 	gxx_args+=("${gcc_args_vg[@]}")
 	ld_args+=("${ld_args_vg[@]}")
 	ld_args_ext+=("${ld_args_ext_vg[@]}")
 	;;
-tsan|debug_thread)
+tsan|debug_thread|tsandeps)
 	# Standardize build directory
 	build=tsan
 	
@@ -217,3 +228,12 @@ done
 cmd=("${LD[@]}" -o bin/"$build"/"$out_bin" "${ld_args[@]}" "${obj_files[@]}" "${ld_args_ext[@]}")
 echo "${cmd[@]}"
 "${cmd[@]}"
+
+if [[ "$depbuild" == true ]]; then
+	cd ImGuiFileDialog/ &&
+	git stash
+	cd "$owd"
+	cd ImGuiColorTextEdit/ &&
+	git stash
+	cd "$owd"
+fi
