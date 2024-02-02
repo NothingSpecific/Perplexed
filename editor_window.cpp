@@ -36,7 +36,7 @@ namespace Perplexed{
 			delete lang;
 		}
 		bool editor_window::setup(){
-			lang = (TextEditor::LanguageDefinition*) &TextEditor::LanguageDefinition::CPlusPlus();
+			lang = (TextEditor::LanguageDefinition*) TextEditor::LanguageDefinition::CPlusPlus();
 		
 			// set your own known preprocessor symbols...
 			static const char* ppnames[] = { "NULL", "PM_REMOVE", "ZeroMemory", "DXGI_SWAP_EFFECT_DISCARD", "D3D_FEATURE_LEVEL", "D3D_DRIVER_TYPE_HARDWARE", "WINAPI","D3D11_SDK_VERSION", "assert" };
@@ -82,7 +82,7 @@ namespace Perplexed{
 				id.mDeclaration = std::string(idecls[i]);
 				lang->mIdentifiers.insert(std::make_pair(std::string(identifiers[i]), id));
 			}
-			editor->SetLanguageDefinition(*lang);
+			editor->SetLanguageDefinition(lang);
 			//editor->SetPalette(TextEditor::GetLightPalette());
 		
 			// error markers
@@ -107,7 +107,7 @@ namespace Perplexed{
 			ImGui::Text("%6d/%-6d %6d lines  | %s | %s | %s | %s", cpos.mLine + 1, cpos.mColumn + 1, editor->GetTotalLines(),
 				editor->IsOverwrite() ? "Ovr" : "Ins",
 				!editor->IsSaved() ? "*" : " ",
-				editor->GetLanguageDefinition().mName.c_str(), file);
+				editor->GetLanguageDefinition()->mName.c_str(), file);
 
 			editor->Render("TextEditor");
 			ImGui::End();
