@@ -99,6 +99,9 @@ namespace Perplexed{
 			//bpts.insert(47);
 			//editor->SetBreakpoints(bpts);
 			
+			// Create an example FindResult to be rendered
+//			editor->AddFindResult(TextEditor::FindResult{1, 3, 7, 9});
+			
 			return true;
 		}
 		bool editor_window::render(){

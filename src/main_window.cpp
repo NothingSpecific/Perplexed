@@ -28,8 +28,14 @@ namespace Perplexed{
 	namespace GUI{
 		main_window::main_window(){}
 		main_window::~main_window(){
-			for(editor_window *e : editors)
+			bool deleted_default_editor = false;
+			for(editor_window *e : editors){
+				if(e == editor)
+					deleted_default_editor = true;
 				delete e;
+			}
+			if(!deleted_default_editor)
+				delete editor;
 		}
 		bool main_window::setup(){
 			if(editor != nullptr)
