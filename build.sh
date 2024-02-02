@@ -23,14 +23,8 @@ cxx_sources+=("${imgui_sources[@]}")
 gcc_args_dbg=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=leak -fsanitize=address -fsanitize-address-use-after-scope -fstack-protector -fstack-protector-all -fstack-check)
 gxx_args_dbg=("${gcc_args_dbg[@]}")
 
-gcc_args_vg=(-g)
-gxx_args_vg=("${gcc_args_vg[@]}")
-
 ld_args_dbg=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=leak -fsanitize=address -fsanitize-address-use-after-scope)
 ld_args_ext_dbg=()
-
-ld_args_vg=(-g)
-ld_args_ext_vg=()
 
 # We'll use a separate build for TSAN, since TSAN and ASAN/LSAN are mutually exclusive
 gcc_args_dbg_thread=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=thread -fsanitize-address-use-after-scope -fstack-protector -fstack-protector-all -fstack-check)
@@ -39,11 +33,28 @@ gxx_args_dbg_thread=("${gcc_args_dbg[@]}")
 ld_args_dbg_thread=(-g -fsanitize=undefined -fno-sanitize-recover -fsanitize=float-cast-overflow -fsanitize=thread -fsanitize-address-use-after-scope)
 ld_args_ext_dbg_thread=()
 
-gcc_args_release=(-fomit-frame-pointer -fexpensive-optimizations -flto -O3 -s -fstack-protector-explicit)
+gcc_args_release=(-fomit-frame-pointer -fexpensive-optimizations -flto -O3 -fstack-protector-explicit)
 gxx_args_release=("${gcc_args_release}")
 
-ld_args_release=(-fomit-frame-pointer -fexpensive-optimizations -flto -O3 -s -fstack-protector-explicit)
-ld_args_ext_release=(-s)
+ld_args_release=(-fomit-frame-pointer -fexpensive-optimizations -flto -O3 -fstack-protector-explicit)
+ld_args_ext_release=()
+
+gcc_args_vg=(-g "${gcc_args_release[@]}")
+gxx_args_vg=(-g "${gxx_args_release[@]}")
+
+gcc_args_vgdbg=(-g)
+gxx_args_vgdbg=(-g)
+
+ld_args_vgdbg=(-g)
+ld_args_ext_vgdbg=()
+ld_args_vgdbg=(-g)
+ld_args_ext_vgdbg=()
+
+# Strip generated executables for release builds
+gcc_args_release+=(-s)
+gxx_args_release+=(-s)
+ld_args_release+=(-s)
+ld_args_ext_release+=(-s)
 
 gcc_search_directories=( glfw/include/GLFW/ SDL/include ./ src/ imgui/ imgui/backends/ ImGuiFileDialog/)
 gxx_search_directories=("${gcc_search_directories[@]}")
@@ -127,17 +138,23 @@ release|reldeps)
 	ld_args+=("${ld_args_release[@]}")
 	ld_args_ext+=("${ld_args_ext_release[@]}")
 	;;
+valgrind|vgrel|vg)
+	gcc_args+=("${gcc_args_vg[@]}")
+	gxx_args+=("${gcc_args_vg[@]}")
+	ld_args+=("${ld_args_vg[@]}")
+	ld_args_ext+=("${ld_args_ext_vg[@]}")
+	;;
 debug|dbgdeps)
 	gcc_args+=("${gcc_args_dbg[@]}")
 	gxx_args+=("${gcc_args_dbg[@]}")
 	ld_args+=("${ld_args_dbg[@]}")
 	ld_args_ext+=("${ld_args_ext_dbg[@]}")
 	;;
-valgrind|vgdeps)
-	gcc_args+=("${gcc_args_vg[@]}")
-	gxx_args+=("${gcc_args_vg[@]}")
-	ld_args+=("${ld_args_vg[@]}")
-	ld_args_ext+=("${ld_args_ext_vg[@]}")
+vgdbg|vgdbgdeps)
+	gcc_args+=("${gcc_args_vgdbg[@]}")
+	gxx_args+=("${gcc_args_vgdbg[@]}")
+	ld_args+=("${ld_args_vgdbg[@]}")
+	ld_args_ext+=("${ld_args_ext_vgdbg[@]}")
 	;;
 tsan|debug_thread|tsandeps)
 	# Standardize build directory

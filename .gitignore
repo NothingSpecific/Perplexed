@@ -35,4 +35,7 @@
 build/
 bin/
 
+# Valgrind suppressions files
+valgrind/
+
 imgui.ini
