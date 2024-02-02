@@ -14,7 +14,7 @@ LD=("g++")
 imgui_sources=(imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_tables.cpp imgui/imgui_widgets.cpp imgui/backends/imgui_impl_opengl3.cpp imgui/backends/imgui_impl_sdl2.cpp ImGuiFileDialog/ImGuiFileDialog.cpp ImGuiColorTextEdit/TextEditor.cpp)
 
 c_sources=()
-cxx_sources=(main.cpp gui.cpp file_open_dialog.cpp fonts/font.cpp keyboard.cpp window.cpp main_window.cpp editor_window.cpp filesystem.cpp)
+cxx_sources=(src/main.cpp src/gui.cpp src/file_open_dialog.cpp fonts/font.cpp src/keyboard.cpp src/window.cpp src/main_window.cpp src/editor_window.cpp src/filesystem.cpp)
 
 cxx_sources+=("${imgui_sources[@]}")
 
@@ -45,7 +45,7 @@ gxx_args_release=("${gcc_args_release}")
 ld_args_release=(-fomit-frame-pointer -fexpensive-optimizations -flto -O3 -s -fstack-protector-explicit)
 ld_args_ext_release=(-s)
 
-gcc_search_directories=( glfw/include/GLFW/ SDL/include ./ imgui/ imgui/backends/ ImGuiFileDialog/)
+gcc_search_directories=( glfw/include/GLFW/ SDL/include ./ src/ imgui/ imgui/backends/ ImGuiFileDialog/)
 gxx_search_directories=("${gcc_search_directories[@]}")
 
 link_libs=(SDL/build/.libs/libSDL2.a SDL/build/.libs/libSDL2.so SDL/build/.libs/libSDL2_test.a SDL/build/.libs/libSDL2main.a glfw/build/src/libglfw3.a)
@@ -62,7 +62,7 @@ file_args=()
 # ImGuiFileDialog/ImGuiFileDialog.cpp throws a ton of unknown pragma warnings, but their developers are aware
 # Their CMakeLists.txt suppresses these warnings, so we'll do the same
 file_args+=("ImGuiFileDialog/ImGuiFileDialog.cpp" -Wno-unknown-pragmas)
-file_args+=("file_open_dialog.cpp" -Wno-unknown-pragmas) # `file_open_dialog.cpp` includes `ImGuiFileDialog.h`, so we need to suppress errors here too
+file_args+=("src/file_open_dialog.cpp" -Wno-unknown-pragmas) # `file_open_dialog.cpp` includes `ImGuiFileDialog.h`, so we need to suppress errors here too
 
 # ImGuiColorTextEdit/TextEditor.cpp throws plenty of errors when compiled with with -Wall
 # Suppress them so we can focus on what we have control over: our own code
