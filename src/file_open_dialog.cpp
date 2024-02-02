@@ -8,30 +8,20 @@
 #include "icon_fonts/IconsForkAwesome.h"
 #include "icon_fonts/IconsMaterialDesign.h"
 
-#include "ImGuiFileDialog/ImGuiFileDialog.h"
-
 namespace Perplexed{
 	namespace GUI{
-		file_open_dialog::~file_open_dialog(){
-			if(dialog != nullptr){
-				delete dialog;
-				dialog = nullptr;
-			}
-		}
 		bool file_open_dialog::setup(){
 			if(is_setup) return true;
-			
-			dialog = new ImGuiFileDialog();
 
 			IGFD::FileDialogConfig config;
 
 			config.flags =	ImGuiFileDialogFlags_DisableCreateDirectoryButton |
 					ImGuiFileDialogFlags_DontShowHiddenFiles;
 
-			dialog->OpenDialog(name(), name(), "((.*))", config);
+			dialog.OpenDialog(name(), name(), "((.*))", config);
 
-			dialog->SetFileStyle(IGFD_FileStyleByFullName, ".", ImVec4(0.3f, 0.3f, 0.3f, 1), ICON_FK_CIRCLE);
-			dialog->SetFileStyle(IGFD_FileStyleByFullName, "..", ImVec4(0.8f, 0.8f, 0.8f, 1), ICON_FK_LEVEL_UP);
+			dialog.SetFileStyle(IGFD_FileStyleByFullName, ".", ImVec4(0.3f, 0.3f, 0.3f, 1), ICON_FK_CIRCLE);
+			dialog.SetFileStyle(IGFD_FileStyleByFullName, "..", ImVec4(0.8f, 0.8f, 0.8f, 1), ICON_FK_LEVEL_UP);
 			
 			is_setup = true;
 			return true;
@@ -43,9 +33,9 @@ namespace Perplexed{
 				);
 			ImVec2 min_size = max_size / 2.0f;
 			
-			if (dialog->Display(name(), ImGuiWindowFlags_NoCollapse, min_size, max_size)){
-				if (dialog->IsOk()){
-					Perplexed::GUI::open(dialog->GetFilePathName().c_str());
+			if (dialog.Display(name(), ImGuiWindowFlags_NoCollapse, min_size, max_size)){
+				if (dialog.IsOk()){
+					Perplexed::GUI::open(dialog.GetFilePathName().c_str());
 				}
 	                        close();
 	                        return false;
@@ -57,9 +47,7 @@ namespace Perplexed{
 		}
 		bool file_open_dialog::close(){
 			if(is_setup){
-				dialog->Close();
-				delete dialog;
-				dialog = nullptr;
+				dialog.Close();
 				is_setup = false;
 			}
 			return true;

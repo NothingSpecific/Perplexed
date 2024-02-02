@@ -65,16 +65,18 @@ link_libs=(SDL/build/.libs/libSDL2.a SDL/build/.libs/libSDL2.so SDL/build/.libs/
 # We won't assume we're smarter than the compiler by ignoring warnings
 
 # In fact, let's have the compiler give us more warnings, to ensure we're writing the best possible code (-Wall)
-gcc_args=(-fexceptions -pthread -ldl -lGL -Wall -Werror)
+gcc_args=(-fexceptions -pthread -ldl -lGL -Wall -Werror -Wno-unknown-pragmas)
 gxx_args=("${gcc_args[@]}" -fpermissive -std=gnu++17)
 
 file_args=()
 
 # ImGuiFileDialog/ImGuiFileDialog.cpp throws a ton of unknown pragma warnings, but their developers are aware
 # Their CMakeLists.txt suppresses these warnings, so we'll do the same
-file_args+=("ImGuiFileDialog/ImGuiFileDialog.cpp" -Wno-unknown-pragmas)
-file_args+=("src/file_open_dialog.cpp" -Wno-unknown-pragmas) # `file_open_dialog.cpp` includes `ImGuiFileDialog.h`, so we need to suppress errors here too
-file_args+=("src/file_save_dialog.cpp" -Wno-unknown-pragmas)
+
+# These are commented out since they're now redundant - `-Wno-unknown-pragmas` is now being set for all compiled files
+#file_args+=("ImGuiFileDialog/ImGuiFileDialog.cpp" -Wno-unknown-pragmas)
+#file_args+=("src/file_open_dialog.cpp" -Wno-unknown-pragmas) # `file_open_dialog.cpp` includes `ImGuiFileDialog.h`, so we need to suppress errors here too
+#file_args+=("src/file_save_dialog.cpp" -Wno-unknown-pragmas)
 
 # ImGuiColorTextEdit/TextEditor.cpp throws plenty of errors when compiled with with -Wall
 # Suppress them so we can focus on what we have control over: our own code

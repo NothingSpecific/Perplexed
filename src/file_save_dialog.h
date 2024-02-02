@@ -3,10 +3,7 @@
 
 #include "window.h"
 
-namespace IGFD{
-	class FileDialog;
-}
-
+#include "ImGuiFileDialog/ImGuiFileDialog.h"
 
 namespace Perplexed{
 	namespace GUI{
@@ -14,12 +11,11 @@ namespace Perplexed{
 		
 		class file_save_dialog : window{
 		private:
-			IGFD::FileDialog *dialog;
+			IGFD::FileDialog dialog;
 			bool is_setup = false;
 			
 			virtual bool setup();
 		public:
-			virtual ~file_save_dialog();
 			virtual bool render();
 			
 			// `render()` within `file_open_dialog` works differently than other windows. Instead of returning `false` on error, it returns `false` when the dialog is closed
