@@ -82,9 +82,9 @@ file_args=()
 # Suppress them so we can focus on what we have control over: our own code
 # I can't be too critical, since the warnings only appear with -Wall. With default warnings, it compiles cleanly
 file_args+=("ImGuiColorTextEdit/TextEditor.cpp" -Wno-sign-compare) # This usually isn't an issue, but can cause undefined behavior in certain cases
-file_args+=("ImGuiColorTextEdit/TextEditor.cpp" -Wno-unused-variable) # This isn't really ever an issue
-file_args+=("ImGuiColorTextEdit/TextEditor.cpp" -Wno-reorder) # Ignoring this can result in operations on uninitialized variables. Any standards-compliant C99 compiler initializes to 0 anyway, but it's still not a good idea
-file_args+=("ImGuiColorTextEdit/TextEditor.cpp" -Wno-sequence-point) # This warns of possible undefined behavior in side-effects. It should probably be addressed
+#file_args+=("ImGuiColorTextEdit/TextEditor.cpp" -Wno-unused-variable) # This isn't really ever an issue
+#file_args+=("ImGuiColorTextEdit/TextEditor.cpp" -Wno-reorder) # Ignoring this can result in operations on uninitialized variables. Any standards-compliant C99 compiler initializes to 0 anyway, but it's still not a good idea
+#file_args+=("ImGuiColorTextEdit/TextEditor.cpp" -Wno-sequence-point) # This warns of possible undefined behavior in side-effects. It should probably be addressed
 
 ld_args=(-pthread -pthread -flto)
 ld_args_ext=(-ldl -lGL)
