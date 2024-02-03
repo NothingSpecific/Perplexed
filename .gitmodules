@@ -1,6 +1,6 @@
 [submodule "imgui"]
 	path = imgui
-	url = https://github.com/ocornut/imgui.git
+	url = https://github.com/NothingSpecific/imgui.git
 [submodule "ImGuiFileDialog"]
 	path = ImGuiFileDialog
 	url = https://github.com/NothingSpecific/ImGuiFileDialog.git

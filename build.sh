@@ -123,11 +123,15 @@ if [[ "$build" == "all" ]]; then
 fi
 depbuild=false
 
+submodules_forked=(ImGuiFileDialog ImGuiColorTextEdit imgui)
+
 case "$build" in
 reldeps|dbgdeps|tsandeps|vgdeps)
 	depbuild=true
-	cp -r ~/git/ImGuiFileDialog/* ImGuiFileDialog/
-	cp -r ~/git/ImGuiColorTextEdit/* ImGuiColorTextEdit/
+	for module in "${submodules_forked[@]}"; do
+		cp -r ~/git/"$module"/* "$module"/ ||
+		echo "Failed to pull submodule '$module'"
+	done
 	;;
 esac
 
@@ -250,10 +254,16 @@ echo "${cmd[@]}"
 "${cmd[@]}"
 
 if [[ "$depbuild" == true ]]; then
-	cd ImGuiFileDialog/ &&
-	git stash
-	cd "$owd"
-	cd ImGuiColorTextEdit/ &&
-	git stash
+	for module in "${submodules_forked[@]}"; do
+		success=false
+		cd "$owd" &&
+		cd "$module"/ &&
+		git stash &&
+		success=true
+
+		if [[ "$success" != true ]]; then
+			echo "Failed to stash submodule '$module'"
+		fi
+	done
 	cd "$owd"
 fi
