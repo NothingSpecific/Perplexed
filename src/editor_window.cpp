@@ -100,7 +100,7 @@ namespace Perplexed{
 			//editor->SetBreakpoints(bpts);
 			
 			// Create an example FindResult to be rendered
-//			editor->AddFindResult(TextEditor::FindResult{1, 3, 7, 9});
+//			editor->AddFindResult(TextEditor::FindResult{1, 3, 7, 3});
 			
 			return true;
 		}
