@@ -6,10 +6,13 @@
 #include "definitions.h"
 #include "ImGuiColorTextEdit/TextEditor.h"
 
+#include <mutex>
+
 namespace Perplexed{
 	namespace GUI{
 		class main_window;
 	}
+	class finder_thread;
 }
 #include "main_window.h"
 		
@@ -26,10 +29,14 @@ namespace Perplexed{
 							ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
 							ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus |
 							ImGuiWindowFlags_NoSavedSettings;
+							
+			finder_thread *finder = nullptr;
 			
 		public:
 			TextEditor *editor;
 			TextEditor::LanguageDefinition *lang = nullptr;
+			
+			std::mutex mtx;
 			
 			editor_window(main_window *parent);
 			virtual ~editor_window();
@@ -46,9 +53,12 @@ namespace Perplexed{
 			
 			// Set the file without modifying the editor
 			virtual void set_file(const char *file);
+			
+			virtual void find(std::regex rex);
 		};
 	}
 }
 
+#include "finder_thread.h"
 
 #endif

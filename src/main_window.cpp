@@ -80,10 +80,14 @@ namespace Perplexed{
 				save_dialog.open();
 				show_save_dialog = save_dialog.render(save_file);
 			}
+			if(show_find_dialog){
+				show_find_dialog = find_dialog.render();
+			}
 			ImGui::PopFont();
 			
 			ImGui::SetNextWindowPos(display_origin);
 			ImGui::SetNextWindowSize(display_internal_size);
+			
 			editor->render();
 			
 			return true;
@@ -214,6 +218,7 @@ namespace Perplexed{
 			show_open_dialog = true;
 		}
 		void main_window::find(){
+			find_dialog.setup(this, editor);
 			show_find_dialog = true;
 		}
 		const char *main_window::name(){

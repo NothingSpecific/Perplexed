@@ -11,10 +11,10 @@ CC=("gcc")
 CXX=("g++")
 LD=("g++")
 
-imgui_sources=(imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_tables.cpp imgui/imgui_widgets.cpp imgui/backends/imgui_impl_opengl3.cpp imgui/backends/imgui_impl_sdl2.cpp ImGuiFileDialog/ImGuiFileDialog.cpp ImGuiColorTextEdit/TextEditor.cpp)
+imgui_sources=(imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_tables.cpp imgui/imgui_widgets.cpp imgui/backends/imgui_impl_opengl3.cpp imgui/backends/imgui_impl_sdl2.cpp ImGuiFileDialog/ImGuiFileDialog.cpp ImGuiColorTextEdit/TextEditor.cpp imgui/misc/cpp/imgui_stdlib.cpp)
 
 c_sources=()
-cxx_sources=(src/main.cpp src/gui.cpp src/file_open_dialog.cpp src/file_save_dialog.cpp fonts/font.cpp src/keyboard.cpp src/window.cpp src/main_window.cpp src/editor_window.cpp src/filesystem.cpp)
+cxx_sources=(src/main.cpp src/gui.cpp src/file_open_dialog.cpp src/file_save_dialog.cpp fonts/font.cpp src/keyboard.cpp src/window.cpp src/main_window.cpp src/editor_window.cpp src/filesystem.cpp src/finder_thread.cpp src/regex_finder_thread.cpp src/find_dialog.cpp)
 
 cxx_sources+=("${imgui_sources[@]}")
 
@@ -135,29 +135,30 @@ reldeps|dbgdeps|tsandeps|vgdeps)
 	;;
 esac
 
-mkdir -p build/obj/"$build"
-mkdir -p bin/"$build"
-
 case "$build" in
 release|reldeps)
+	build=release
 	gcc_args+=("${gcc_args_release[@]}")
 	gxx_args+=("${gxx_args_release[@]}")
 	ld_args+=("${ld_args_release[@]}")
 	ld_args_ext+=("${ld_args_ext_release[@]}")
 	;;
 valgrind|vgrel|vg)
+	build=valgrind
 	gcc_args+=("${gcc_args_vg[@]}")
 	gxx_args+=("${gcc_args_vg[@]}")
 	ld_args+=("${ld_args_vg[@]}")
 	ld_args_ext+=("${ld_args_ext_vg[@]}")
 	;;
 debug|dbgdeps)
+	build=debug
 	gcc_args+=("${gcc_args_dbg[@]}")
 	gxx_args+=("${gcc_args_dbg[@]}")
 	ld_args+=("${ld_args_dbg[@]}")
 	ld_args_ext+=("${ld_args_ext_dbg[@]}")
 	;;
 vgdbg|vgdbgdeps)
+	build=vgdbg
 	gcc_args+=("${gcc_args_vgdbg[@]}")
 	gxx_args+=("${gcc_args_vgdbg[@]}")
 	ld_args+=("${ld_args_vgdbg[@]}")
@@ -191,6 +192,9 @@ install)
 	exit 1
 	;;
 esac
+
+mkdir -p build/obj/"$build"
+mkdir -p bin/"$build"
 
 for d in "${gcc_search_directories[@]}"; do
 	gcc_args+=(-I"$d")

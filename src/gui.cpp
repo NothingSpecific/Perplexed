@@ -24,7 +24,6 @@
 #include <iostream>
 
 #include "gui.h"
-#include "file_open_dialog.h"
 #include "keyboard.h"
 
 #include "fonts/font_intern.h" // For loading fonts

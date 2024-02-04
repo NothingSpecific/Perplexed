@@ -14,6 +14,8 @@
 
 #include <fstream>
 #include <iostream>
+#include <filesystem>
+#include <regex>
 
 #include "gui.h"
 #include "file_open_dialog.h"
@@ -22,7 +24,7 @@
 #include "fonts/font_intern.h" // For loading fonts
 #include "filesystem.h"
 
-#include <filesystem>
+#include "regex_finder_thread.h"
 
 namespace Perplexed{
 	namespace GUI{
@@ -34,6 +36,10 @@ namespace Perplexed{
 			free((void*) file);
 			free((void*) file_basename);
 			free(window_name);
+			if(finder != nullptr){
+				finder->finish();
+				delete finder;
+			}
 			delete editor;
 			delete lang;
 		}
@@ -105,6 +111,8 @@ namespace Perplexed{
 			return true;
 		}
 		bool editor_window::render(){
+			mtx.lock();
+			
 			auto cpos = editor->GetCursorPosition();
 			ImGui::Begin(name(), nullptr, flags);
 			flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
@@ -113,9 +121,11 @@ namespace Perplexed{
 				editor->IsOverwrite() ? "Ovr" : "Ins",
 				!editor->IsSaved() ? "*" : " ",
 				editor->GetLanguageDefinition()->mName.c_str(), file);
-
+			
 			editor->Render("TextEditor");
+			
 			ImGui::End();
+			mtx.unlock();
 			return true;
 		}
 		const char *editor_window::name(){
@@ -129,6 +139,12 @@ namespace Perplexed{
 		}
 		
 		bool editor_window::open(const char *file){
+			if(finder != nullptr){
+				finder->finish();
+				delete finder;
+				finder = nullptr;
+			}
+			
 			set_file(file);
 			
 			if(std::filesystem::is_directory(file)){
@@ -141,6 +157,9 @@ namespace Perplexed{
 				std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
 				editor->SetText(str);
 				editor->MarkSaved();
+				
+				find(std::regex("[a-z]+"));
+				
 				return true;
 			}
 			return false;
@@ -160,23 +179,50 @@ namespace Perplexed{
 			window_name = strcat(window_name, "]");
 		}
 		bool editor_window::force_save(){
+			mtx.lock();
+			
 			std::ofstream t(file);
 			if(t.good()){
 				t << editor->GetText();
 				t.close();
 				editor->MarkSaved();
+				
+				mtx.unlock();
 				return true;
 			}
+			mtx.unlock();
 			return false;
 		}
 		bool editor_window::save(){
-			if(editor->IsReadOnly()) return false;
-			return force_save();
+			mtx.lock();
+			
+			if(editor->IsReadOnly()){
+				mtx.unlock();
+				return false;
+			}
+			bool ret = force_save();
+			
+			mtx.unlock();
+			return ret;
 		}
 		void editor_window::close(){
+			if(finder != nullptr){
+				finder->finish();
+				delete finder;
+				finder = nullptr;
+			}
 			free((void*) file);
 			file = nullptr;
 			file_basename = nullptr;
+		}
+		void editor_window::find(std::regex rex){
+			if(finder != nullptr){
+				finder->finish();
+				delete finder;
+			}
+			// No mutex is needed since the finder thread is already guaranteed to be ended
+			//editor->ClearFindResults();
+			finder = new regex_finder_thread(this, rex);
 		}
 	}
 }
