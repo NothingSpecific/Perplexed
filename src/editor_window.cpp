@@ -158,8 +158,6 @@ namespace Perplexed{
 				editor->SetText(str);
 				editor->MarkSaved();
 				
-				find(std::regex("[a-z]+"));
-				
 				return true;
 			}
 			return false;
