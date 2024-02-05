@@ -24,6 +24,10 @@
 
 #include "fonts/font_intern.h" // For loading fonts
 
+#ifdef MAIN_THREAD_FPS_LIMIT
+#include <chrono>
+#endif
+
 namespace Perplexed{
 	namespace GUI{
 		main_window::main_window(){}
@@ -45,6 +49,10 @@ namespace Perplexed{
 			return editor->setup();
 		}
 		bool main_window::render(){
+			#ifdef MAIN_THREAD_FPS_LIMIT
+			const std::chrono::high_resolution_clock::time_point tp_begin = std::chrono::high_resolution_clock::now();
+			#endif
+			
 			const ImVec2 origin(0, 0);
 			
 			ImGui::PushFont(font::icon_font_karla_regular_forkawesome);
@@ -89,6 +97,14 @@ namespace Perplexed{
 			ImGui::SetNextWindowSize(display_internal_size);
 			
 			editor->render();
+			
+			#ifdef MAIN_THREAD_FPS_LIMIT
+			const std::chrono::high_resolution_clock::time_point tp_end = std::chrono::high_resolution_clock::now();
+			const long millis = std::chrono::duration_cast<std::chrono::milliseconds>(tp_end - tp_begin).count();
+			const long wait_for = (1000.0 / MAIN_THREAD_FPS_LIMIT) - millis;
+			if(wait_for > 0)
+				std::this_thread::sleep_for(std::chrono::milliseconds(wait_for));
+			#endif
 			
 			return true;
 		}
@@ -179,8 +195,15 @@ namespace Perplexed{
 			if(!is_open(file)){
 				editor_window *e = new editor_window(this);
 				if(e->open(file)){
-					if(editors.empty() && editor != nullptr)
-						delete editor;
+					if(editor != nullptr){
+						if(editors.empty())
+							delete editor;
+						else{
+							editor->find();
+							editor->editor->ClearFindResults();
+						}
+					}
+					
 					e->setup();
 					editors.push_back(e);
 					editor = e;
@@ -194,7 +217,9 @@ namespace Perplexed{
 				for(editor_window *e : editors)
 					if(!strcmp(e->filename(), file)){
 						editor = e;
-						return true;
+					} else{
+						e->find(); // Clear all background finder threads to save system resources
+						e->editor->ClearFindResults();
 					}
 			return false;
 		}

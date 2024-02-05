@@ -9,6 +9,10 @@
 
 namespace Perplexed{
 	class finder_thread{
+		private:
+			// Doesn't need to be atomic since the value never changes once the thread is created
+			bool repeat;
+			
 		protected:
 			std::thread *thread = nullptr;
 			std::mutex mtx;
@@ -19,7 +23,7 @@ namespace Perplexed{
 			std::atomic_bool running;
 			std::atomic_bool done;
 			
-			virtual void construct(GUI::editor_window *editor);
+			virtual void construct(GUI::editor_window *editor, bool repeat);
 			
 			virtual ~finder_thread();
 			
@@ -27,6 +31,7 @@ namespace Perplexed{
 			virtual void stop();
 			virtual void finish();
 			virtual void join();
+			virtual bool should_repeat();
 	};
 }
 

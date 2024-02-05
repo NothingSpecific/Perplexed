@@ -18,16 +18,18 @@ namespace Perplexed{
 			if(ImGui::InputText("RegEx", &search_string)){
 				if(!search_string.empty())
 					try{
-						mw->editor->find(std::regex(search_string));
+						mw->editor->find(std::regex(search_string), true);
 					} catch(std::regex_error &){
-						mw->editor->mtx.lock();
-						mw->editor->editor->ClearFindResults();				
-						mw->editor->mtx.unlock();
+						mw->editor->find();
+//						mw->editor->mtx.lock();
+						mw->editor->editor->ClearFindResults();
+//						mw->editor->mtx.unlock();
 					}
 				else{
-					mw->editor->mtx.lock();
+					mw->editor->find();
+//					mw->editor->mtx.lock();
 					mw->editor->editor->ClearFindResults();				
-					mw->editor->mtx.unlock();
+//					mw->editor->mtx.unlock();
 				}
 				ImGui::End();
 				return true;

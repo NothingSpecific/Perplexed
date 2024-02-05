@@ -9,7 +9,7 @@ namespace Perplexed{
 	class regex_finder_thread : public finder_thread{
 		public:
 			std::regex rex;
-			regex_finder_thread(GUI::editor_window *editor, std::regex rex);
+			regex_finder_thread(GUI::editor_window *editor, std::regex rex, bool repeat);
 	};
 	void find(regex_finder_thread *thread);
 }

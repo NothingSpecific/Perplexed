@@ -139,12 +139,7 @@ namespace Perplexed{
 		}
 		
 		bool editor_window::open(const char *file){
-			if(finder != nullptr){
-				finder->finish();
-				delete finder;
-				finder = nullptr;
-			}
-			
+			find();
 			set_file(file);
 			
 			if(std::filesystem::is_directory(file)){
@@ -204,23 +199,27 @@ namespace Perplexed{
 			return ret;
 		}
 		void editor_window::close(){
+			find();
+			free((void*) file);
+			file = nullptr;
+			file_basename = nullptr;
+		}
+		// If `repeat` is true, this repeats the find operation until the finder thread is stopped from another thread
+		void editor_window::find(std::regex rex, bool repeat){
+			find();
+			// No mutex is needed since the finder thread is already guaranteed to be ended
+			//editor->ClearFindResults();
+			finder = new regex_finder_thread(this, rex, repeat);
+		}
+		void editor_window::find(std::regex rex){
+			find(rex, false);
+		}
+		void editor_window::find(){
 			if(finder != nullptr){
 				finder->finish();
 				delete finder;
 				finder = nullptr;
 			}
-			free((void*) file);
-			file = nullptr;
-			file_basename = nullptr;
-		}
-		void editor_window::find(std::regex rex){
-			if(finder != nullptr){
-				finder->finish();
-				delete finder;
-			}
-			// No mutex is needed since the finder thread is already guaranteed to be ended
-			//editor->ClearFindResults();
-			finder = new regex_finder_thread(this, rex);
 		}
 	}
 }

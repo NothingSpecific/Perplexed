@@ -54,7 +54,14 @@ namespace Perplexed{
 			// Set the file without modifying the editor
 			virtual void set_file(const char *file);
 			
+			// If `repeat` is true, this repeats the find operation until the finder thread is stopped from another thread
+			virtual void find(std::regex rex, bool repeat);
+			
+			// Runs the find operation only once
 			virtual void find(std::regex rex);
+			
+			// Stops any running find operations
+			virtual void find();
 		};
 	}
 }
