@@ -151,6 +151,8 @@ namespace Perplexed{
 						editor->editor->SetReadOnly(ro);
 					ImGui::Separator();
 
+					if (ImGui::MenuItem("Find", "Ctrl-F", nullptr, !ro))
+						find();
 					if (ImGui::MenuItem("Undo", "Ctrl-Z", nullptr, !ro && editor->editor->CanUndo()))
 						editor->editor->Undo();
 					if (ImGui::MenuItem("Redo", "Ctrl-Y | Ctrl-Shift-Z", nullptr, !ro && editor->editor->CanRedo()))
@@ -207,6 +209,7 @@ namespace Perplexed{
 					e->setup();
 					editors.push_back(e);
 					editor = e;
+					show_find_dialog = false;
 					return true;
 				} else{
 					delete e;
@@ -217,6 +220,7 @@ namespace Perplexed{
 				for(editor_window *e : editors)
 					if(!strcmp(e->filename(), file)){
 						editor = e;
+						show_find_dialog = false;
 					} else{
 						e->find(); // Clear all background finder threads to save system resources
 						e->editor->ClearFindResults();
@@ -241,6 +245,7 @@ namespace Perplexed{
 		}
 		void main_window::open(){
 			show_open_dialog = true;
+			show_find_dialog = false;
 		}
 		void main_window::find(){
 			find_dialog.setup(this, editor);

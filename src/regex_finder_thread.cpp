@@ -24,16 +24,16 @@ namespace Perplexed{
 			thread->editor->mtx.lock();
 			for(int a=0; a<thread->editor->editor->GetTotalLines() && thread->running; ++a){
 				std::string line = thread->editor->editor->GetTextLine(a);
-				thread->editor->editor->ClearFindResults(a+1);
+				thread->editor->editor->ClearFindResults(a);
 				
 				std::smatch match;
 				int position = 0;
 				while(std::regex_search(line, match, thread->rex) && thread->running){
 					
-					size_t start = position + match.position();
-					size_t length = match[0].length();
+					const size_t start = position + match.position();
+					const size_t length = match[0].length();
 					
-					thread->editor->editor->AddFindResult(TextEditor::FindResult{a+1, start, a+1, length});
+					thread->editor->editor->AddFindResult(TextEditor::FindResult{a, start, a, length});
 					
 					// Add sub-matches, if applicable
 					/*

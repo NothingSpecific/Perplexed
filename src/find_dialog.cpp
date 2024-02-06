@@ -34,6 +34,18 @@ namespace Perplexed{
 				ImGui::End();
 				return true;
 			}
+			ImGui::SameLine();
+			if(ImGui::Button("<")){
+				mw->editor->mtx.lock();
+				mw->editor->editor->GotoPrevFindResult(true);
+				mw->editor->mtx.unlock();
+			}
+			ImGui::SameLine();
+			if(ImGui::Button(">")){
+				mw->editor->mtx.lock();
+				mw->editor->editor->GotoNextFindResult(true);
+				mw->editor->mtx.unlock();
+			}
 			ImGui::End();
 			return opened;
 		}
